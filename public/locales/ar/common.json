@@ -1,0 +1,191 @@
+{
+  "app": {
+    "name": "أنظار",
+    "tagline": "ابحث عن حرفيين موثوقين بالقرب منك"
+  },
+  "auth": {
+    "welcome": "مرحباً بك في أنظار",
+    "chooseLanguage": "اختر لغتك",
+    "french": "Français",
+    "arabic": "العربية",
+    "continue": "متابعة",
+    "enterPhone": "أدخل رقم هاتفك",
+    "phonePlaceholder": "06 XX XX XX XX",
+    "phoneHint": "سنرسل لك رمز SMS",
+    "sendCode": "إرسال الرمز",
+    "enterCode": "أدخل الرمز المستلم",
+    "codeHint": "رمز مكون من 6 أرقام تم إرساله إلى",
+    "verify": "تحقق",
+    "resend": "إعادة إرسال الرمز",
+    "resendIn": "إعادة الإرسال خلال {{seconds}} ث",
+    "chooseType": "كيف ستستخدم أنظار؟",
+    "iAmCustomer": "أبحث عن حرفي",
+    "iAmProvider": "أنا حرفي",
+    "customerDesc": "انشر طلبك واستقبل عروضاً من محترفين موثوقين",
+    "providerDesc": "ابحث عن عملاء وطور نشاطك",
+    "invalidPhone": "رقم الهاتف غير صحيح",
+    "otpExpired": "انتهت صلاحية الرمز. يرجى طلب رمز جديد.",
+    "otpInvalid": "الرمز غير صحيح. تحقق وأعد المحاولة.",
+    "tooManyAttempts": "محاولات كثيرة جداً. أعد المحاولة خلال 15 دقيقة."
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "requests": "طلباتي",
+    "messages": "الرسائل",
+    "profile": "الملف الشخصي",
+    "leads": "مهامي",
+    "performance": "الأداء"
+  },
+  "customer": {
+    "newRequest": "طلب جديد",
+    "myRequests": "طلباتي",
+    "noRequests": "لا توجد طلبات حالياً",
+    "noRequestsHint": "انشر طلبك الأول واستقبل عروضاً من حرفيين موثوقين",
+    "startRequest": "نشر طلب",
+    "requestStatus": {
+      "open": "في الانتظار",
+      "matched": "تم العثور على حرفيين",
+      "in_progress": "جارٍ التنفيذ",
+      "completed": "مكتمل",
+      "expired": "منتهي الصلاحية",
+      "cancelled": "ملغى"
+    }
+  },
+  "request": {
+    "step1Title": "ما الخدمة التي تبحث عنها؟",
+    "step2Title": "صف حاجتك",
+    "step3Title": "أين تقع؟",
+    "step4Title": "ما مدى الاستعجال؟",
+    "step5Title": "ملخص الطلب",
+    "descriptionLabel": "الوصف",
+    "descriptionPlaceholder": "صف مشكلتك أو حاجتك بالتفصيل...",
+    "budgetLabel": "الميزانية (اختياري)",
+    "budgetPlaceholder": "مثلاً: ~500 درهم، الميزانية مرنة...",
+    "cityLabel": "المدينة",
+    "neighborhoodLabel": "الحي",
+    "urgency": {
+      "urgent": "عاجل (اليوم / الغد)",
+      "soon": "قريباً (هذا الأسبوع)",
+      "flexible": "مرن (غير مستعجل)"
+    },
+    "submit": "نشر طلبي",
+    "submitting": "جارٍ النشر...",
+    "success": "تم نشر طلبك!",
+    "successHint": "نحن نبحث عن حرفيين متاحين. ستُبلَّغ فور توفرهم.",
+    "viewRequest": "عرض طلبي",
+    "matchedProviders": "الحرفيون المتاحون",
+    "noMatches": "لا يوجد حرفيون متاحون حالياً",
+    "noMatchesHint": "سنواصل البحث وسنعلمك فور توفر حرفي مناسب."
+  },
+  "provider": {
+    "onboarding": {
+      "title": "أنشئ ملفك الحرفي",
+      "step1": "المعلومات الشخصية",
+      "step2": "مهنك",
+      "step3": "منطقة العمل",
+      "step4": "خبرتك",
+      "step5": "التحقق من الهوية",
+      "step6": "صور الأعمال",
+      "step7": "ملخص",
+      "fullNameLabel": "الاسم الكامل",
+      "businessNameLabel": "الاسم التجاري (اختياري)",
+      "bioLabel": "نبذة عنك",
+      "bioPlaceholder": "صف خبرتك وتخصصاتك...",
+      "tradesLabel": "اختر مهنك (3 كحد أقصى)",
+      "yearsLabel": "سنوات الخبرة",
+      "cityLabel": "المدينة الرئيسية",
+      "neighborhoodsLabel": "الأحياء المخدومة",
+      "idDocLabel": "بطاقة الهوية الوطنية (CIN)",
+      "idDocHint": "صورة أمامية وخلفية لبطاقة هويتك",
+      "submit": "إرسال للتحقق",
+      "submitting": "جارٍ الإرسال...",
+      "pendingTitle": "تم إرسال ملفك!",
+      "pendingHint": "سيتحقق فريقنا من ملفك خلال 24-48 ساعة. ستتلقى رسالة SMS للتأكيد."
+    },
+    "status": {
+      "pending": "في انتظار التحقق",
+      "verified": "موثق",
+      "rejected": "مرفوض",
+      "suspended": "موقوف"
+    },
+    "leads": {
+      "title": "المهام الجديدة",
+      "empty": "لا توجد مهام جديدة",
+      "emptyHint": "ستظهر هنا المهام الجديدة المطابقة لملفك",
+      "respond": "الرد",
+      "decline": "رفض",
+      "budget": "الميزانية",
+      "urgency": "الاستعجال",
+      "postedAt": "نُشر"
+    }
+  },
+  "categories": {
+    "electrician": "كهربائي",
+    "plumbing": "سباك",
+    "painting": "دهان",
+    "hvac": "تكييف",
+    "tiling": "بلاط",
+    "handyman": "مصلح عام"
+  },
+  "offer": {
+    "send": "إرسال عرض",
+    "price": "السعر (درهم)",
+    "description": "وصف العرض",
+    "duration": "المدة المقدرة",
+    "submit": "إرسال العرض",
+    "accept": "قبول",
+    "decline": "رفض",
+    "pending": "في الانتظار",
+    "accepted": "مقبول",
+    "declined": "مرفوض"
+  },
+  "chat": {
+    "messagePlaceholder": "اكتب رسالة...",
+    "send": "إرسال",
+    "offerReceived": "عرض مُستلم",
+    "offerSent": "عرض مُرسل"
+  },
+  "admin": {
+    "title": "الإدارة",
+    "verificationQueue": "قائمة التحقق",
+    "approve": "موافقة",
+    "reject": "رفض",
+    "suspend": "إيقاف",
+    "reason": "السبب",
+    "noQueue": "القائمة فارغة"
+  },
+  "common": {
+    "loading": "جارٍ التحميل...",
+    "error": "حدث خطأ",
+    "retry": "إعادة المحاولة",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "back": "رجوع",
+    "next": "التالي",
+    "confirm": "تأكيد",
+    "yes": "نعم",
+    "no": "لا",
+    "or": "أو",
+    "by": "بواسطة",
+    "in": "في",
+    "reviews": "تقييمات",
+    "review": "تقييم",
+    "years": "سنوات",
+    "verified": "موثق",
+    "notFound": "الصفحة غير موجودة",
+    "goHome": "العودة للرئيسية",
+    "logout": "تسجيل الخروج",
+    "settings": "الإعدادات",
+    "language": "اللغة",
+    "viewProfile": "عرض الملف",
+    "callWhatsApp": "التواصل عبر واتساب",
+    "call": "اتصال"
+  },
+  "errors": {
+    "required": "هذا الحقل مطلوب",
+    "phoneInvalid": "رقم الهاتف غير صحيح",
+    "minLength": "الحد الأدنى {{min}} أحرف",
+    "maxLength": "الحد الأقصى {{max}} أحرف",
+    "generic": "حدث خطأ. يرجى المحاولة مرة أخرى."
+  }
+}

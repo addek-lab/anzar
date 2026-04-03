@@ -1,0 +1,191 @@
+{
+  "app": {
+    "name": "Anzar",
+    "tagline": "Trouvez des artisans de confiance près de chez vous"
+  },
+  "auth": {
+    "welcome": "Bienvenue sur Anzar",
+    "chooseLanguage": "Choisissez votre langue",
+    "french": "Français",
+    "arabic": "العربية",
+    "continue": "Continuer",
+    "enterPhone": "Entrez votre numéro de téléphone",
+    "phonePlaceholder": "06 XX XX XX XX",
+    "phoneHint": "Nous vous enverrons un code SMS",
+    "sendCode": "Envoyer le code",
+    "enterCode": "Entrez le code reçu",
+    "codeHint": "Code à 6 chiffres envoyé au",
+    "verify": "Vérifier",
+    "resend": "Renvoyer le code",
+    "resendIn": "Renvoyer dans {{seconds}}s",
+    "chooseType": "Comment allez-vous utiliser Anzar ?",
+    "iAmCustomer": "Je cherche un artisan",
+    "iAmProvider": "Je suis artisan",
+    "customerDesc": "Publiez une demande et recevez des offres de professionnels vérifiés",
+    "providerDesc": "Trouvez des clients et développez votre activité",
+    "invalidPhone": "Numéro de téléphone invalide",
+    "otpExpired": "Le code a expiré. Veuillez en demander un nouveau.",
+    "otpInvalid": "Code incorrect. Vérifiez et réessayez.",
+    "tooManyAttempts": "Trop de tentatives. Réessayez dans 15 minutes."
+  },
+  "nav": {
+    "home": "Accueil",
+    "requests": "Mes demandes",
+    "messages": "Messages",
+    "profile": "Profil",
+    "leads": "Mes missions",
+    "performance": "Performances"
+  },
+  "customer": {
+    "newRequest": "Nouvelle demande",
+    "myRequests": "Mes demandes",
+    "noRequests": "Aucune demande pour le moment",
+    "noRequestsHint": "Publiez votre première demande et recevez des offres d'artisans vérifiés",
+    "startRequest": "Publier une demande",
+    "requestStatus": {
+      "open": "En attente",
+      "matched": "Artisans trouvés",
+      "in_progress": "En cours",
+      "completed": "Terminé",
+      "expired": "Expiré",
+      "cancelled": "Annulé"
+    }
+  },
+  "request": {
+    "step1Title": "Quel service cherchez-vous ?",
+    "step2Title": "Décrivez votre besoin",
+    "step3Title": "Où êtes-vous situé ?",
+    "step4Title": "Quelle est l'urgence ?",
+    "step5Title": "Récapitulatif",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Décrivez votre problème ou besoin en détail...",
+    "budgetLabel": "Budget (optionnel)",
+    "budgetPlaceholder": "Ex: ~500 MAD, budget flexible...",
+    "cityLabel": "Ville",
+    "neighborhoodLabel": "Quartier",
+    "urgency": {
+      "urgent": "Urgent (aujourd'hui / demain)",
+      "soon": "Bientôt (cette semaine)",
+      "flexible": "Flexible (pas pressé)"
+    },
+    "submit": "Publier ma demande",
+    "submitting": "Publication en cours...",
+    "success": "Votre demande a été publiée !",
+    "successHint": "Nous recherchons des artisans disponibles. Vous serez notifié.",
+    "viewRequest": "Voir ma demande",
+    "matchedProviders": "Artisans disponibles",
+    "noMatches": "Aucun artisan disponible pour le moment",
+    "noMatchesHint": "Nous continuerons de chercher et vous notifierons dès qu'un artisan se rend disponible."
+  },
+  "provider": {
+    "onboarding": {
+      "title": "Créez votre profil artisan",
+      "step1": "Informations personnelles",
+      "step2": "Vos métiers",
+      "step3": "Zone d'intervention",
+      "step4": "Votre expérience",
+      "step5": "Vérification d'identité",
+      "step6": "Photos de travaux",
+      "step7": "Récapitulatif",
+      "fullNameLabel": "Nom complet",
+      "businessNameLabel": "Nom commercial (optionnel)",
+      "bioLabel": "Présentation",
+      "bioPlaceholder": "Décrivez votre expérience et vos spécialités...",
+      "tradesLabel": "Sélectionnez vos métiers (max 3)",
+      "yearsLabel": "Années d'expérience",
+      "cityLabel": "Ville principale",
+      "neighborhoodsLabel": "Quartiers desservis",
+      "idDocLabel": "Pièce d'identité (CIN)",
+      "idDocHint": "Photo recto-verso de votre CIN",
+      "submit": "Soumettre pour vérification",
+      "submitting": "Envoi en cours...",
+      "pendingTitle": "Dossier soumis !",
+      "pendingHint": "Notre équipe vérifiera votre profil sous 24-48h. Vous recevrez un SMS de confirmation."
+    },
+    "status": {
+      "pending": "En attente de vérification",
+      "verified": "Vérifié",
+      "rejected": "Rejeté",
+      "suspended": "Suspendu"
+    },
+    "leads": {
+      "title": "Nouvelles missions",
+      "empty": "Aucune nouvelle mission",
+      "emptyHint": "Les nouvelles missions correspondant à votre profil apparaîtront ici",
+      "respond": "Répondre",
+      "decline": "Décliner",
+      "budget": "Budget",
+      "urgency": "Urgence",
+      "postedAt": "Publiée"
+    }
+  },
+  "categories": {
+    "electrician": "Électricien",
+    "plumbing": "Plombier",
+    "painting": "Peintre",
+    "hvac": "Climatisation",
+    "tiling": "Carreleur",
+    "handyman": "Homme à tout faire"
+  },
+  "offer": {
+    "send": "Envoyer une offre",
+    "price": "Prix (MAD)",
+    "description": "Description de l'offre",
+    "duration": "Durée estimée",
+    "submit": "Envoyer l'offre",
+    "accept": "Accepter",
+    "decline": "Décliner",
+    "pending": "En attente",
+    "accepted": "Acceptée",
+    "declined": "Déclinée"
+  },
+  "chat": {
+    "messagePlaceholder": "Écrivez un message...",
+    "send": "Envoyer",
+    "offerReceived": "Offre reçue",
+    "offerSent": "Offre envoyée"
+  },
+  "admin": {
+    "title": "Administration",
+    "verificationQueue": "File de vérification",
+    "approve": "Approuver",
+    "reject": "Rejeter",
+    "suspend": "Suspendre",
+    "reason": "Motif",
+    "noQueue": "File vide"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "retry": "Réessayer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "back": "Retour",
+    "next": "Suivant",
+    "confirm": "Confirmer",
+    "yes": "Oui",
+    "no": "Non",
+    "or": "ou",
+    "by": "par",
+    "in": "à",
+    "reviews": "avis",
+    "review": "avis",
+    "years": "ans",
+    "verified": "Vérifié",
+    "notFound": "Page introuvable",
+    "goHome": "Retour à l'accueil",
+    "logout": "Déconnexion",
+    "settings": "Paramètres",
+    "language": "Langue",
+    "viewProfile": "Voir le profil",
+    "callWhatsApp": "Contacter sur WhatsApp",
+    "call": "Appeler"
+  },
+  "errors": {
+    "required": "Ce champ est obligatoire",
+    "phoneInvalid": "Numéro de téléphone invalide",
+    "minLength": "Minimum {{min}} caractères",
+    "maxLength": "Maximum {{max}} caractères",
+    "generic": "Une erreur est survenue. Veuillez réessayer."
+  }
+}
