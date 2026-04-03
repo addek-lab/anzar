@@ -1,7 +1,17 @@
+/**
+ * Email + password login — DEVELOPMENT ONLY.
+ *
+ * This route exists so engineers can test the app locally without needing
+ * a real Moroccan SIM card to receive OTP SMS messages.
+ *
+ * ✅ SECURITY: The route is completely disabled in production. Any request
+ * in production receives a 404, making the endpoint invisible to scanners.
+ */
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminSupabase } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import { requireJson } from '@/lib/api-guard'
 
 const schema = z.object({
   email: z.string().email(),
@@ -16,6 +26,14 @@ function getAdminClient() {
 }
 
 export async function POST(req: NextRequest) {
+  // ✅ SECURITY: Hard-disable in production
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json({ error: 'NOT_FOUND' }, { status: 404 })
+  }
+
+  const ctError = requireJson(req)
+  if (ctError) return ctError
+
   const body = await req.json()
   const parsed = schema.safeParse(body)
   if (!parsed.success) {
@@ -40,7 +58,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, userType: profile?.user_type ?? null })
   }
 
-  // New user — sign up
+  // New dev user — auto sign-up
   if (signInError?.message.includes('Invalid login credentials')) {
     const admin = getAdminClient()
 
@@ -49,21 +67,18 @@ export async function POST(req: NextRequest) {
       password: parsed.data.password,
     })
 
-    if (signUpError) {
-      return NextResponse.json({ error: 'AUTH_FAILED', message: signUpError.message }, { status: 400 })
+    if (signUpError || !signUpData.user) {
+      return NextResponse.json({ error: 'AUTH_FAILED' }, { status: 400 })
     }
 
-    if (signUpData.user) {
-      // Create profile using service role (bypasses RLS)
-      await admin.from('profiles').upsert({
-        id: signUpData.user.id,
-        phone: null,
-        updated_at: new Date().toISOString(),
-      })
-    }
+    await admin.from('profiles').upsert({
+      id: signUpData.user.id,
+      phone: null,
+      updated_at: new Date().toISOString(),
+    })
 
     return NextResponse.json({ success: true, userType: null })
   }
 
-  return NextResponse.json({ error: 'AUTH_FAILED', message: signInError?.message }, { status: 400 })
+  return NextResponse.json({ error: 'AUTH_FAILED' }, { status: 400 })
 }

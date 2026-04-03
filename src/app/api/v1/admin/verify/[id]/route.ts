@@ -1,6 +1,7 @@
-import { createClient, createAdminClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import { requireAdmin, requireJson, safeError } from '@/lib/api-guard'
 
 const schema = z.object({
   action: z.enum(['approve', 'reject']),
@@ -9,19 +10,14 @@ const schema = z.object({
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'UNAUTHORIZED' }, { status: 401 })
 
-  const { data: adminProfile } = await supabase
-    .from('profiles')
-    .select('user_type')
-    .eq('id', user.id)
-    .single()
+  // ✅ SECURITY: use shared guard — checks JWT app_metadata.role first
+  const auth = await requireAdmin(req)
+  if (auth instanceof NextResponse) return auth
+  const { user } = auth
 
-  if (adminProfile?.user_type !== 'admin') {
-    return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
-  }
+  const ctError = requireJson(req)
+  if (ctError) return ctError
 
   const body = await req.json()
   const parsed = schema.safeParse(body)
@@ -35,7 +31,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     .update({ status: newStatus, updated_at: new Date().toISOString() })
     .eq('id', id)
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return safeError('UPDATE_FAILED', error.message)
 
   // Get provider's profile_id to send notification
   const { data: pp } = await adminClient
