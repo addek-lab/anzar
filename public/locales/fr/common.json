@@ -30,11 +30,13 @@
   },
   "nav": {
     "home": "Accueil",
-    "requests": "Mes demandes",
+    "requests": "Demandes",
+    "jobs": "Missions",
     "messages": "Messages",
+    "notifications": "Alertes",
     "profile": "Profil",
-    "leads": "Mes missions",
-    "performance": "Performances"
+    "leads": "Leads",
+    "performance": "Stats"
   },
   "customer": {
     "newRequest": "Nouvelle demande",

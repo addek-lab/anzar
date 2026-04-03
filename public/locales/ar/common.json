@@ -30,10 +30,12 @@
   },
   "nav": {
     "home": "الرئيسية",
-    "requests": "طلباتي",
+    "requests": "الطلبات",
+    "jobs": "مهامي",
     "messages": "الرسائل",
-    "profile": "الملف الشخصي",
-    "leads": "مهامي",
+    "notifications": "التنبيهات",
+    "profile": "الملف",
+    "leads": "العروض",
     "performance": "الأداء"
   },
   "customer": {

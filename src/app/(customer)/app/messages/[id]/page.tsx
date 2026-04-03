@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useLocale } from '@/hooks/useLocale'
 import { createClient } from '@/lib/supabase/client'
 import { ArrowLeft, ArrowRight, Send } from 'lucide-react'
+import { toast } from 'sonner'
 
 type Message = {
   id: string
@@ -12,7 +13,7 @@ type Message = {
   content: string
   message_type: string
   created_at: string
-  offer?: { price_mad: number; description: string; status: string; estimated_duration: string | null } | null
+  offer?: { id: string; price_mad: number; description: string; status: string; estimated_duration: string | null } | null
 }
 
 type ConvInfo = {
@@ -34,6 +35,7 @@ export default function CustomerChatPage() {
   const [token, setToken] = useState<string | null>(null)
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
+  const [offerLoading, setOfferLoading] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   // Get session + conversation info
@@ -110,6 +112,49 @@ export default function CustomerChatPage() {
     setSending(false)
   }
 
+  async function handleAcceptOffer(offerId: string) {
+    if (!token || offerLoading) return
+    setOfferLoading(offerId)
+    try {
+      const res = await fetch(`/api/v1/offers/${offerId}/accept`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (res.ok) {
+        toast.success(isRTL ? '✅ تم قبول العرض!' : '✅ Offre acceptée !')
+        await loadMessages()
+      } else {
+        const data = await res.json()
+        toast.error(data.error || (isRTL ? 'خطأ' : 'Erreur'))
+      }
+    } catch {
+      toast.error(isRTL ? 'خطأ في الشبكة' : 'Erreur réseau')
+    } finally {
+      setOfferLoading(null)
+    }
+  }
+
+  async function handleDeclineOffer(offerId: string) {
+    if (!token || offerLoading) return
+    setOfferLoading(offerId)
+    try {
+      const res = await fetch(`/api/v1/offers/${offerId}/decline`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (res.ok) {
+        await loadMessages()
+      } else {
+        const data = await res.json()
+        toast.error(data.error || (isRTL ? 'خطأ' : 'Erreur'))
+      }
+    } catch {
+      toast.error(isRTL ? 'خطأ في الشبكة' : 'Erreur réseau')
+    } finally {
+      setOfferLoading(null)
+    }
+  }
+
   const formatTime = (iso: string) =>
     new Date(iso).toLocaleTimeString(locale === 'ar' ? 'ar-MA' : 'fr-MA', { hour: '2-digit', minute: '2-digit' })
 
@@ -138,6 +183,8 @@ export default function CustomerChatPage() {
         {messages.map(msg => {
           const isMe = msg.sender_id === myId
           if (msg.message_type === 'offer' && msg.offer) {
+            const canAct = !isMe && msg.offer.status === 'pending'
+            const isThisLoading = offerLoading === msg.offer.id
             return (
               <div key={msg.id} className="flex justify-center">
                 <div className="bg-white border border-[#1A6B4A]/20 rounded-2xl p-4 max-w-xs w-full shadow-sm">
@@ -158,6 +205,31 @@ export default function CustomerChatPage() {
                      msg.offer.status === 'declined' ? (isRTL ? '❌ مرفوض' : '❌ Refusée') :
                      (isRTL ? '⏳ في الانتظار' : '⏳ En attente')}
                   </div>
+
+                  {/* Accept / Decline buttons for pending offers received by the customer */}
+                  {canAct && (
+                    <div className="mt-3 space-y-2">
+                      <button
+                        onClick={() => handleAcceptOffer(msg.offer!.id)}
+                        disabled={!!offerLoading}
+                        className="w-full bg-[#1A6B4A] text-white rounded-xl py-3 text-sm font-semibold disabled:opacity-50 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                      >
+                        {isThisLoading ? (
+                          <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                        ) : (
+                          <>✅ {isRTL ? 'قبول العرض' : "Accepter l'offre"}</>
+                        )}
+                      </button>
+                      <button
+                        onClick={() => handleDeclineOffer(msg.offer!.id)}
+                        disabled={!!offerLoading}
+                        className="w-full border border-red-300 text-red-600 rounded-xl py-2.5 text-sm font-medium disabled:opacity-50 active:scale-[0.98] transition-all"
+                      >
+                        {isRTL ? 'رفض' : 'Décliner'}
+                      </button>
+                    </div>
+                  )}
+
                   <p className="text-xs text-gray-300 mt-2 text-end">{formatTime(msg.created_at)}</p>
                 </div>
               </div>

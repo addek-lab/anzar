@@ -17,20 +17,6 @@ async function getUser(req: NextRequest) {
   return user
 }
 
-// Check user is a participant in the conversation
-async function isParticipant(admin: ReturnType<typeof getAdmin>, conversationId: string, userId: string) {
-  const { data: conv } = await admin
-    .from('conversations')
-    .select('customer_id, provider_id, provider_profiles!inner(profile_id)')
-    .eq('id', conversationId)
-    .single()
-
-  if (!conv) return false
-  return (
-    conv.customer_id === userId ||
-    (conv as any).provider_profiles?.profile_id === userId
-  )
-}
 
 export async function GET(req: NextRequest) {
   const user = await getUser(req)
@@ -57,7 +43,7 @@ export async function GET(req: NextRequest) {
 
   const { data: messages, error } = await admin
     .from('messages')
-    .select('*, offer:offers(price_mad, description, status, estimated_duration)')
+    .select('*, offer:offers(id, price_mad, description, status, estimated_duration)')
     .eq('conversation_id', conversationId)
     .order('created_at', { ascending: true })
 

@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { Briefcase, MessageSquare, BarChart2, User } from 'lucide-react'
+import { Briefcase, MessageSquare, BarChart2, User, ClipboardList } from 'lucide-react'
 
 export default function ProviderNav() {
   const pathname = usePathname()
@@ -11,6 +11,7 @@ export default function ProviderNav() {
 
   const links = [
     { href: '/pro', icon: Briefcase, label: t('leads') },
+    { href: '/pro/jobs', icon: ClipboardList, label: t('jobs') },
     { href: '/pro/messages', icon: MessageSquare, label: t('messages') },
     { href: '/pro/performance', icon: BarChart2, label: t('performance') },
     { href: '/pro/profile', icon: User, label: t('profile') },
