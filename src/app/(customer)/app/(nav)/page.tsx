@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { getTranslations, getLocale } from 'next-intl/server'
-import { Plus, ChevronRight, Clock, CheckCircle2, Search } from 'lucide-react'
+import { Plus, ChevronRight, Search } from 'lucide-react'
 
 const statusConfig: Record<string, { label_fr: string; label_ar: string; color: string; dot: string }> = {
   open:        { label_fr: 'En attente',         label_ar: 'في الانتظار',       color: 'bg-amber-50 text-amber-600',   dot: 'bg-amber-400' },

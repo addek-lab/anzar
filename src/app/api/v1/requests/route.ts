@@ -3,10 +3,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { runMatchingEngine } from '@/lib/matching'
 
+const uuidLike = z.string().min(1)
 const createSchema = z.object({
-  category_id: z.string().uuid(),
-  city_id: z.string().uuid(),
-  neighborhood_id: z.string().uuid().nullable().optional(),
+  category_id: uuidLike,
+  city_id: uuidLike,
+  neighborhood_id: uuidLike.nullable().optional(),
   description: z.string().min(10).max(2000),
   budget_text: z.string().max(200).nullable().optional(),
   urgency: z.enum(['urgent', 'soon', 'flexible']),

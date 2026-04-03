@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
 const schema = z.object({
-  notification_ids: z.array(z.string().uuid()).optional(),
+  notification_ids: z.array(z.string().min(1)).optional(),
 })
 
 export async function PATCH(req: NextRequest) {

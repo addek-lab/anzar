@@ -2,14 +2,17 @@ import { createClient as createAdminSupabase } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
+// Use min(1) instead of .uuid() — seed data uses version-0 UUIDs (e.g. 00000000-0000-0000-0000-000000000001)
+// which Zod v4's strict uuid() validator rejects. The DB FK constraints provide real validation.
+const uuidLike = z.string().min(1)
 const schema = z.object({
   full_name: z.string().min(2).max(100),
   business_name: z.string().max(100).optional().nullable(),
   bio_fr: z.string().min(5).max(1000),
   bio_ar: z.string().min(5).max(1000).optional().nullable(),
-  city_id: z.string().uuid(),
-  neighborhood_ids: z.array(z.string().uuid()).max(10).default([]),
-  trade_ids: z.array(z.string().uuid()).min(1).max(3),
+  city_id: uuidLike,
+  neighborhood_ids: z.array(uuidLike).max(10).default([]),
+  trade_ids: z.array(uuidLike).min(1).max(3),
   years_experience: z.number().int().min(0).max(60).default(0),
 })
 

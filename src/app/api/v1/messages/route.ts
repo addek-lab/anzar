@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
 }
 
 const sendSchema = z.object({
-  conversation_id: z.string().uuid(),
+  conversation_id: z.string().min(1),
   content: z.string().min(1).max(2000),
 })
 
