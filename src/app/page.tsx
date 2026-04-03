@@ -194,12 +194,12 @@ export default async function LandingPage() {
 
           {/* Right actions */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <Link
+            <a
               href={t.nav.langToggleHref}
               className="text-sm font-semibold text-gray-600 hover:text-[#1A6B4A] px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors border border-[#EBEBEB]"
             >
               {t.nav.langToggleLabel}
-            </Link>
+            </a>
             <Link
               href="/auth"
               className="bg-[#1A6B4A] text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-[#155c3e] transition-colors shadow-sm"
@@ -471,12 +471,12 @@ export default async function LandingPage() {
             </nav>
 
             {/* Lang toggle */}
-            <Link
+            <a
               href={t.nav.langToggleHref}
               className="text-sm font-medium text-gray-400 hover:text-white border border-gray-700 px-3 py-1.5 rounded-lg hover:border-gray-500 transition-all"
             >
               {t.footer.langLabel}
-            </Link>
+            </a>
           </div>
 
           <div className="mt-10 pt-6 border-t border-gray-800 text-xs text-gray-600 text-center">
