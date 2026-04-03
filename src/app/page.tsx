@@ -1,5 +1,6 @@
 import { getLocale } from 'next-intl/server'
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   Wrench,
   Zap,
@@ -187,11 +188,8 @@ export default async function LandingPage() {
       <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#EBEBEB]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 bg-[#1A6B4A] rounded-lg flex items-center justify-center shadow-sm">
-              <Wrench className="w-4 h-4 text-white" strokeWidth={2.5} />
-            </div>
-            <span className="text-xl font-bold text-[#1A6B4A] tracking-tight">Anzar</span>
+          <Link href="/" className="flex items-center shrink-0">
+            <Image src="/logo.png" alt="Anzar" width={140} height={50} className="h-10 w-auto object-contain" priority />
           </Link>
 
           {/* Right actions */}
@@ -454,10 +452,7 @@ export default async function LandingPage() {
             {/* Brand */}
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-7 h-7 bg-[#1A6B4A] rounded-lg flex items-center justify-center">
-                  <Wrench className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />
-                </div>
-                <span className="text-white font-bold text-lg">Anzar</span>
+                <Image src="/logo.png" alt="Anzar" width={120} height={40} className="h-8 w-auto object-contain brightness-0 invert" />
               </div>
               <p className="text-sm text-gray-500 max-w-xs">{t.footer.tagline}</p>
             </div>

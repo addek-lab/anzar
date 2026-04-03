@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import Image from 'next/image'
 
 export default function LanguagePage() {
   const router = useRouter()
@@ -31,11 +32,8 @@ export default function LanguagePage() {
       <div className="flex-1 flex flex-col items-center justify-center px-6 pt-16 pb-8">
         {/* Logo */}
         <div className="mb-10 text-center">
-          <div className="w-20 h-20 bg-[#1A6B4A] rounded-3xl mx-auto flex items-center justify-center shadow-lg shadow-[#1A6B4A]/20 mb-5">
-            <span className="text-white text-3xl font-bold">أ</span>
-          </div>
-          <h1 className="text-4xl font-bold text-gray-900 tracking-tight">Anzar</h1>
-          <p className="text-gray-400 text-sm mt-1">أنظار · La plateforme des artisans</p>
+          <Image src="/logo.png" alt="Anzar" width={220} height={80} className="h-20 w-auto object-contain mx-auto" priority />
+          <p className="text-gray-400 text-sm mt-3">La plateforme des artisans · منصة الحرفيين</p>
         </div>
 
         {/* Language cards */}
