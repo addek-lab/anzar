@@ -32,7 +32,7 @@ export default function LanguagePage() {
       <div className="flex-1 flex flex-col items-center justify-center px-6 pt-16 pb-8">
         {/* Logo */}
         <div className="mb-10 text-center">
-          <Image src="/logo.png" alt="Anzar" width={220} height={80} className="h-20 w-auto object-contain mx-auto" priority />
+          <Image src="/logo.png" alt="Anzar" width={320} height={175} className="h-28 w-auto object-contain mx-auto" priority />
           <p className="text-gray-400 text-sm mt-3">La plateforme des artisans · منصة الحرفيين</p>
         </div>
 

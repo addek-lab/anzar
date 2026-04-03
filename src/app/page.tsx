@@ -186,10 +186,10 @@ export default async function LandingPage() {
 
       {/* ── NAV ─────────────────────────────────────────────────────────────── */}
       <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#EBEBEB]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          {/* Logo */}
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
+          {/* Logo — 2816×1536 native, aspect ratio ~1.83:1 */}
           <Link href="/" className="flex items-center shrink-0">
-            <Image src="/logo.png" alt="Anzar" width={140} height={50} className="h-10 w-auto object-contain" priority />
+            <Image src="/logo.png" alt="Anzar" width={220} height={120} className="h-14 w-auto object-contain" priority />
           </Link>
 
           {/* Right actions */}
@@ -452,7 +452,7 @@ export default async function LandingPage() {
             {/* Brand */}
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Image src="/logo.png" alt="Anzar" width={120} height={40} className="h-8 w-auto object-contain brightness-0 invert" />
+                <Image src="/logo.png" alt="Anzar" width={180} height={98} className="h-12 w-auto object-contain" />
               </div>
               <p className="text-sm text-gray-500 max-w-xs">{t.footer.tagline}</p>
             </div>
