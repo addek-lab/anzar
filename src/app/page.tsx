@@ -251,12 +251,11 @@ export default async function LandingPage() {
 
       {/* ── HERO ────────────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-[#1A6B4A] via-[#1A6B4A] to-[#155c3e]">
-        {/* Decorative background elements */}
+        {/* Decorative background blobs */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
           <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/5" />
           <div className="absolute top-1/2 -left-16 w-64 h-64 rounded-full bg-white/[0.03]" />
           <div className="absolute bottom-0 right-1/3 w-48 h-48 rounded-full bg-white/[0.04]" />
-          {/* Grid pattern */}
           <svg className="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <pattern id="hero-grid" width="40" height="40" patternUnits="userSpaceOnUse">
@@ -267,44 +266,96 @@ export default async function LandingPage() {
           </svg>
         </div>
 
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-20 pb-0">
-          {/* Live badge */}
-          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6">
-            <span className="w-2 h-2 rounded-full bg-[#E8A838] animate-pulse" />
-            <span className="text-white/90 text-sm font-medium">
-              {isRTL ? 'متاح الآن في الدار البيضاء' : 'Disponible à Casablanca'}
-            </span>
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-16 pb-0">
+          {/* Two-column grid: text left, image right */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-end">
+
+            {/* ── Left: text ─────────────────────────────────────────────── */}
+            <div className={`pb-10 ${isRTL ? 'lg:order-2' : ''}`}>
+              {/* Live badge */}
+              <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6">
+                <span className="w-2 h-2 rounded-full bg-[#E8A838] animate-pulse" />
+                <span className="text-white/90 text-sm font-medium">
+                  {isRTL ? 'متاح الآن في الدار البيضاء' : 'Disponible à Casablanca'}
+                </span>
+              </div>
+
+              <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] xl:text-6xl font-bold text-white leading-tight mb-5 text-balance">
+                {t.hero.headline}
+              </h1>
+
+              <p className="text-lg sm:text-xl text-white/75 mb-10 leading-relaxed">
+                {t.hero.sub}
+              </p>
+
+              <div className={`flex flex-col sm:flex-row gap-3`}>
+                <Link
+                  href="/demande"
+                  className="inline-flex items-center justify-center gap-2 bg-[#E8A838] hover:bg-[#d4952e] text-white font-semibold px-7 py-4 rounded-2xl transition-all duration-200 shadow-lg shadow-[#E8A838]/30 hover:-translate-y-0.5 text-base"
+                >
+                  {t.hero.cta1}
+                  <ChevronRight className={`w-4 h-4 ${isRTL ? 'rotate-180' : ''}`} />
+                </Link>
+                <Link
+                  href="/auth"
+                  className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/25 text-white font-semibold px-7 py-4 rounded-2xl transition-all duration-200 text-base"
+                >
+                  {t.hero.cta2}
+                </Link>
+              </div>
+            </div>
+
+            {/* ── Right: worker photo ─────────────────────────────────────── */}
+            <div className={`flex justify-center lg:justify-end items-end ${isRTL ? 'lg:order-1' : ''}`}>
+              <div className="relative w-full max-w-sm lg:max-w-none">
+                {/* Glow ring behind the card */}
+                <div className="absolute -inset-3 bg-white/10 rounded-[2rem] blur-xl" aria-hidden="true" />
+
+                {/* Photo card */}
+                <div className="relative rounded-[1.5rem] overflow-hidden shadow-2xl border border-white/15 aspect-[3/4] lg:aspect-[4/5]">
+                  <Image
+                    src="/worker.jpg"
+                    alt={isRTL ? 'حرفي محترف' : 'Artisan professionnel'}
+                    fill
+                    className="object-cover object-top"
+                    priority
+                    sizes="(max-width: 1024px) 80vw, 44vw"
+                  />
+                  {/* Subtle overlay gradient at bottom for card blending */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#155c3e]/60 via-transparent to-transparent" />
+
+                  {/* Floating badge — rating */}
+                  <div className="absolute bottom-4 start-4 end-4">
+                    <div className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-3 flex items-center gap-3 shadow-lg">
+                      <div className="w-9 h-9 rounded-full bg-[#1A6B4A] flex items-center justify-center shrink-0">
+                        <Star className="w-4 h-4 text-white fill-white" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-gray-900">
+                          {isRTL ? 'فريد · كهربائي' : 'Farid · Électricien'}
+                        </p>
+                        <div className="flex items-center gap-1 mt-0.5">
+                          {[1,2,3,4,5].map(s => (
+                            <span key={s} className="text-[#E8A838] text-xs">★</span>
+                          ))}
+                          <span className="text-xs text-gray-500 ms-1">4.9 / 5</span>
+                        </div>
+                      </div>
+                      <div className="ms-auto">
+                        <span className="text-xs bg-[#1A6B4A]/10 text-[#1A6B4A] font-semibold px-2 py-1 rounded-full">
+                          {isRTL ? 'موثق ✓' : 'Vérifié ✓'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
 
-          {/* Headline */}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight max-w-3xl mb-5 text-balance">
-            {t.hero.headline}
-          </h1>
-
-          {/* Subheadline */}
-          <p className="text-lg sm:text-xl text-white/75 max-w-2xl mb-10 leading-relaxed">
-            {t.hero.sub}
-          </p>
-
-          {/* CTAs */}
-          <div className={`flex flex-col sm:flex-row gap-3 mb-16 ${isRTL ? 'sm:justify-end' : ''}`}>
-            <Link
-              href="/demande"
-              className="inline-flex items-center justify-center gap-2 bg-[#E8A838] hover:bg-[#d4952e] text-white font-semibold px-7 py-4 rounded-2xl transition-all duration-200 shadow-lg shadow-[#E8A838]/30 hover:-translate-y-0.5 text-base"
-            >
-              {t.hero.cta1}
-              <ChevronRight className={`w-4 h-4 ${isRTL ? 'rotate-180' : ''}`} />
-            </Link>
-            <Link
-              href="/auth"
-              className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/25 text-white font-semibold px-7 py-4 rounded-2xl transition-all duration-200 text-base"
-            >
-              {t.hero.cta2}
-            </Link>
-          </div>
-
-          {/* Stats bar */}
-          <div className="bg-white/10 backdrop-blur-sm border border-white/15 rounded-t-3xl px-6 py-5">
+          {/* Stats bar — full width, below both columns */}
+          <div className="bg-white/10 backdrop-blur-sm border border-white/15 border-b-0 rounded-t-3xl px-6 py-5 mt-10">
             <div className="flex flex-col sm:flex-row items-center justify-around gap-4 sm:gap-0 divide-y sm:divide-y-0 sm:divide-x divide-white/15 rtl:sm:divide-x-reverse">
               {t.stats.map((stat, i) => (
                 <div key={i} className="flex flex-col items-center py-2 sm:py-0 sm:px-8 w-full sm:w-auto">
