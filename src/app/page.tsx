@@ -15,6 +15,7 @@ import {
   Phone,
   ChevronRight,
 } from 'lucide-react'
+import DemoLoginWidget from '@/components/DemoLoginWidget'
 
 export const revalidate = 3600 // revalidate stats every hour
 
@@ -482,6 +483,9 @@ export default async function LandingPage() {
           </Link>
         </div>
       </section>
+
+      {/* ── DEMO LOGIN WIDGET ───────────────────────────────────────────────── */}
+      {process.env.NODE_ENV !== 'production' && <DemoLoginWidget />}
 
       {/* ── FOOTER ──────────────────────────────────────────────────────────── */}
       <footer className="bg-gray-900 text-gray-400 py-12">

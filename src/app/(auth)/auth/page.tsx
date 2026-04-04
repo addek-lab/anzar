@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Image from 'next/image'
+import DemoLoginWidget from '@/components/DemoLoginWidget'
 
 export default function LanguagePage() {
   const router = useRouter()
@@ -28,6 +29,7 @@ export default function LanguagePage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
+      <DemoLoginWidget />
       {/* Hero top */}
       <div className="flex-1 flex flex-col items-center justify-center px-6 pt-16 pb-8">
         {/* Logo */}
