@@ -332,7 +332,7 @@ export default async function LandingPage() {
                       </div>
                       <div>
                         <p className="text-xs font-bold text-gray-900">
-                          {isRTL ? 'فريد · كهربائي' : 'Farid · Électricien'}
+                          {isRTL ? 'فاضل · كهربائي' : 'Fadil · Électricien'}
                         </p>
                         <div className="flex items-center gap-1 mt-0.5">
                           {[1,2,3,4,5].map(s => (
