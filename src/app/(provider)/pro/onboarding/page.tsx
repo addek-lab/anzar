@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useLocale } from '@/hooks/useLocale'
 import { createClient } from '@/lib/supabase/client'
 import type { Category, City, Neighborhood } from '@/types'
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, Camera } from 'lucide-react'
 
 type Step = 1 | 2 | 3 | 4 | 5
 
@@ -13,6 +13,7 @@ export default function ProviderOnboardingPage() {
   const router = useRouter()
   const { locale, isRTL } = useLocale()
   const BackIcon = isRTL ? ArrowRight : ArrowLeft
+  const photoInputRef = useRef<HTMLInputElement>(null)
 
   const [step, setStep] = useState<Step>(1)
   const [categories, setCategories] = useState<Category[]>([])
@@ -26,6 +27,8 @@ export default function ProviderOnboardingPage() {
   const [cityId, setCityId] = useState('')
   const [neighborhoodIds, setNeighborhoodIds] = useState<string[]>([])
   const [yearsExp, setYearsExp] = useState(0)
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState('')
+  const [uploadingPhoto, setUploadingPhoto] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
@@ -40,6 +43,30 @@ export default function ProviderOnboardingPage() {
 
   const catName = (c: Category) => locale === 'ar' ? c.name_ar : c.name_fr
   const nbName = (n: Neighborhood) => locale === 'ar' ? n.name_ar : n.name_fr
+
+  async function handleProfilePhotoSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploadingPhoto(true)
+    try {
+      const supabase = createClient()
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) throw new Error('Session expirée')
+      const ext = file.name.split('.').pop() ?? 'jpg'
+      const path = `avatars/${session.user.id}/profile.${ext}`
+      const { error: uploadError } = await supabase.storage
+        .from('provider-photos')
+        .upload(path, file, { contentType: file.type, upsert: true })
+      if (uploadError) throw uploadError
+      const { data: urlData } = supabase.storage.from('provider-photos').getPublicUrl(path)
+      setProfilePhotoUrl(urlData.publicUrl)
+    } catch {
+      // silently fail — photo is optional
+    } finally {
+      setUploadingPhoto(false)
+      if (photoInputRef.current) photoInputRef.current.value = ''
+    }
+  }
 
   function toggleTrade(id: string) {
     setTradeIds(prev => prev.includes(id) ? prev.filter(t => t !== id) : prev.length < 3 ? [...prev, id] : prev)
@@ -83,6 +110,7 @@ export default function ProviderOnboardingPage() {
         city_id: cityId,
         neighborhood_ids: neighborhoodIds,
         years_experience: yearsExp,
+        ...(profilePhotoUrl ? { avatar_url: profilePhotoUrl } : {}),
       }),
     })
 
@@ -121,9 +149,41 @@ export default function ProviderOnboardingPage() {
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-5 py-6 pb-32">
 
-        {/* Step 1: Name */}
+        {/* Step 1: Name + profile photo */}
         {step === 1 && (
           <div className="space-y-4">
+            {/* Profile photo upload */}
+            <div className="flex flex-col items-center gap-3 pb-2">
+              <button
+                type="button"
+                onClick={() => photoInputRef.current?.click()}
+                disabled={uploadingPhoto}
+                className="relative w-24 h-24 rounded-3xl overflow-hidden bg-gray-100 border-2 border-dashed border-gray-200 hover:border-[#1A6B4A] transition-colors flex items-center justify-center group"
+              >
+                {profilePhotoUrl ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img src={profilePhotoUrl} alt="Profile" className="w-full h-full object-cover" />
+                ) : uploadingPhoto ? (
+                  <div className="w-8 h-8 rounded-full border-2 border-[#1A6B4A] border-t-transparent animate-spin" />
+                ) : (
+                  <div className="flex flex-col items-center gap-1 text-gray-400 group-hover:text-[#1A6B4A]">
+                    <Camera size={22} />
+                    <span className="text-xs font-medium">{isRTL ? 'صورة' : 'Photo'}</span>
+                  </div>
+                )}
+              </button>
+              <p className="text-xs text-gray-400">
+                {isRTL ? 'صورة الملف الشخصي (اختياري)' : 'Photo de profil (optionnel)'}
+              </p>
+              <input
+                ref={photoInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleProfilePhotoSelect}
+              />
+            </div>
+
             <div>
               <label className="text-sm font-semibold text-gray-700 block mb-2">
                 {isRTL ? 'الاسم الكامل *' : 'Nom complet *'}

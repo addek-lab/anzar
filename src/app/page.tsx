@@ -1,3 +1,4 @@
+import { createAdminClient } from '@/lib/supabase/server'
 import { getLocale } from 'next-intl/server'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -15,13 +16,37 @@ import {
   ChevronRight,
 } from 'lucide-react'
 
+export const revalidate = 3600 // revalidate stats every hour
+
 export default async function LandingPage() {
   const locale = await getLocale()
   const isRTL = locale === 'ar'
 
+  // Load real stats from DB via admin client (bypasses RLS)
+  let verifiedProviders = 0
+  let completedJobs = 0
+  try {
+    const supabase = await createAdminClient()
+    const [{ count: providerCount }, { count: jobCount }] = await Promise.all([
+      supabase.from('provider_profiles').select('id', { count: 'exact', head: true }).eq('status', 'verified'),
+      supabase.from('service_requests').select('id', { count: 'exact', head: true }).eq('status', 'completed'),
+    ])
+    verifiedProviders = providerCount ?? 0
+    completedJobs = jobCount ?? 0
+  } catch {
+    // fallback to placeholder values if DB query fails
+    verifiedProviders = 0
+    completedJobs = 0
+  }
+
+  const formatCount = (n: number, fallback: string) =>
+    n > 0 ? (n >= 1000 ? `${Math.floor(n / 100) / 10}k+` : `${n}+`) : fallback
+
   const t = {
     nav: {
       login: isRTL ? 'تسجيل الدخول' : 'Connexion',
+      howItWorks: isRTL ? 'كيف يعمل؟' : 'Comment ça marche',
+      artisans: isRTL ? 'الحرفيون' : 'Artisans',
       langToggleLabel: isRTL ? 'FR' : 'AR',
       langToggleHref: isRTL
         ? '/api/v1/locale/set?lang=fr'
@@ -32,20 +57,20 @@ export default async function LandingPage() {
         ? 'اعثر على الحرفي المناسب في دقائق'
         : "Trouvez l\u2019artisan qu\u2019il vous faut, en quelques minutes",
       sub: isRTL
-        ? 'كهربائيون، سباكون، دهانون والمزيد — موثقون، مقيّمون، متاحون في الدار البيضاء'
-        : 'Électriciens, plombiers, peintres et plus — vérifiés, notés, disponibles à Casablanca',
+        ? 'انشر حاجتك مجاناً واستقبل حتى 3 عروض من الحرفيين الموثقين'
+        : 'Publiez votre besoin gratuitement et recevez jusqu\u2019à 3 devis',
       cta1: isRTL ? 'نشر طلب' : 'Publier une demande',
       cta2: isRTL ? 'انضم كحرفي' : 'Devenir artisan',
     },
     stats: isRTL
       ? [
-          { number: '500+', label: 'حرفي موثق' },
-          { number: '2 000+', label: 'طلب منجز' },
+          { number: formatCount(verifiedProviders, '—'), label: 'حرفي موثق' },
+          { number: formatCount(completedJobs, '—'), label: 'طلب منجز' },
           { number: '4.8★', label: 'متوسط التقييم' },
         ]
       : [
-          { number: '500+', label: 'Artisans vérifiés' },
-          { number: '2 000+', label: 'Demandes traitées' },
+          { number: formatCount(verifiedProviders, '—'), label: 'Artisans vérifiés' },
+          { number: formatCount(completedJobs, '—'), label: 'Demandes traitées' },
           { number: '4.8★', label: 'Note moyenne' },
         ],
     how: {
@@ -64,7 +89,7 @@ export default async function LandingPage() {
             },
             {
               icon: '✅',
-              title: 'اختر وادفع',
+              title: 'اختر وتواصل',
               desc: 'قارن، اختر، وقيّم حرفيك',
             },
           ]
@@ -81,7 +106,7 @@ export default async function LandingPage() {
             },
             {
               icon: '✅',
-              title: 'Choisissez et payez',
+              title: 'Choisissez et contactez',
               desc: 'Comparez, choisissez, et évaluez votre artisan',
             },
           ],
@@ -138,8 +163,8 @@ export default async function LandingPage() {
       badge: isRTL ? 'للحرفيين' : 'Pour les artisans',
       title: isRTL ? 'أنت حرفي؟ انضم إلى أنظار' : 'Vous êtes artisan ? Rejoignez Anzar',
       sub: isRTL
-        ? 'تلقَّ مهام مؤهلة مباشرة على هاتفك'
-        : 'Recevez des missions qualifiées directement sur votre téléphone',
+        ? 'تلقَّ مهام مؤهلة مباشرة على هاتفك · مجاني خلال الإطلاق'
+        : 'Recevez des missions qualifiées directement sur votre téléphone · Gratuit pendant le lancement',
       cta: isRTL ? 'إنشاء ملفي مجاناً' : 'Créer mon profil gratuit',
     },
     footer: {
@@ -158,19 +183,19 @@ export default async function LandingPage() {
             { label: 'Contact', href: 'mailto:contact@anzar.ma' },
           ],
       copy: isRTL
-        ? '© 2025 أنظار. جميع الحقوق محفوظة.'
-        : '© 2025 Anzar. Tous droits réservés.',
+        ? '© 2026 أنظار. جميع الحقوق محفوظة.'
+        : '© 2026 Anzar. Tous droits réservés.',
       langLabel: isRTL ? '🇫🇷 Français' : '🇲🇦 العربية',
     },
   }
 
   const categories = [
-    { Icon: Zap, label: isRTL ? 'كهربائي' : 'Électricien', iconCls: 'text-yellow-500', bgCls: 'bg-yellow-50' },
-    { Icon: Droplets, label: isRTL ? 'سباك' : 'Plombier', iconCls: 'text-blue-500', bgCls: 'bg-blue-50' },
-    { Icon: Paintbrush, label: isRTL ? 'دهان' : 'Peinture', iconCls: 'text-pink-500', bgCls: 'bg-pink-50' },
-    { Icon: Wind, label: isRTL ? 'تكييف' : 'Climatisation', iconCls: 'text-cyan-500', bgCls: 'bg-cyan-50' },
-    { Icon: Wrench, label: isRTL ? 'بلاط' : 'Carreleur', iconCls: 'text-orange-500', bgCls: 'bg-orange-50' },
-    { Icon: Hammer, label: isRTL ? 'صانع' : 'Bricoleur', iconCls: 'text-green-600', bgCls: 'bg-green-50' },
+    { Icon: Zap, label: isRTL ? 'كهربائي' : 'Électricien', iconCls: 'text-yellow-500', bgCls: 'bg-yellow-50', slug: 'electricien' },
+    { Icon: Droplets, label: isRTL ? 'سباك' : 'Plombier', iconCls: 'text-blue-500', bgCls: 'bg-blue-50', slug: 'plombier' },
+    { Icon: Paintbrush, label: isRTL ? 'دهان' : 'Peinture', iconCls: 'text-pink-500', bgCls: 'bg-pink-50', slug: 'peinture' },
+    { Icon: Wind, label: isRTL ? 'تكييف' : 'Climatisation', iconCls: 'text-cyan-500', bgCls: 'bg-cyan-50', slug: 'climatisation' },
+    { Icon: Wrench, label: isRTL ? 'بلاط' : 'Carreleur', iconCls: 'text-orange-500', bgCls: 'bg-orange-50', slug: 'carreleur' },
+    { Icon: Hammer, label: isRTL ? 'صانع' : 'Bricoleur', iconCls: 'text-green-600', bgCls: 'bg-green-50', slug: 'bricoleur' },
   ]
 
   const trustIconComponents = [CheckCircle, Star, Shield, Phone]
@@ -194,6 +219,19 @@ export default async function LandingPage() {
 
           {/* Right actions */}
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Guest nav links */}
+            <Link
+              href="#how"
+              className="hidden sm:inline-flex text-sm font-medium text-gray-600 hover:text-[#1A6B4A] px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              {t.nav.howItWorks}
+            </Link>
+            <Link
+              href="/artisans"
+              className="hidden sm:inline-flex text-sm font-medium text-gray-600 hover:text-[#1A6B4A] px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              {t.nav.artisans}
+            </Link>
             <a
               href={t.nav.langToggleHref}
               className="text-sm font-semibold text-gray-600 hover:text-[#1A6B4A] px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors border border-[#EBEBEB]"
@@ -318,10 +356,10 @@ export default async function LandingPage() {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {categories.map(({ Icon, label, iconCls, bgCls }, i) => (
+            {categories.map(({ Icon, label, iconCls, bgCls, slug }, i) => (
               <Link
                 key={i}
-                href="/auth"
+                href={`/artisans?category=${slug}`}
                 className="group flex flex-col items-center gap-3 p-5 bg-white rounded-2xl border border-[#EBEBEB] hover:border-[#1A6B4A] hover:-translate-y-1 hover:shadow-lg transition-all duration-200"
               >
                 <div

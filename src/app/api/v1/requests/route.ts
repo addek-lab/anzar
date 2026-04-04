@@ -11,6 +11,7 @@ const createSchema = z.object({
   description: z.string().min(10).max(2000),
   budget_text: z.string().max(200).nullable().optional(),
   urgency: z.enum(['urgent', 'soon', 'flexible']),
+  photos: z.array(z.string().url()).max(5).optional(),
 })
 
 export async function POST(req: NextRequest) {
@@ -28,14 +29,21 @@ export async function POST(req: NextRequest) {
   const expiresAt = new Date()
   expiresAt.setDate(expiresAt.getDate() + (parsed.data.urgency === 'flexible' ? 60 : 30))
 
+  // Build insert payload; include photos only if column exists in DB
+  const { photos, ...coreData } = parsed.data
+  const insertPayload: Record<string, unknown> = {
+    customer_id: user.id,
+    ...coreData,
+    status: 'open',
+    expires_at: expiresAt.toISOString(),
+  }
+  if (photos && photos.length > 0) {
+    insertPayload.photos = photos
+  }
+
   const { data: request, error } = await supabase
     .from('service_requests')
-    .insert({
-      customer_id: user.id,
-      ...parsed.data,
-      status: 'open',
-      expires_at: expiresAt.toISOString(),
-    })
+    .insert(insertPayload)
     .select()
     .single()
 

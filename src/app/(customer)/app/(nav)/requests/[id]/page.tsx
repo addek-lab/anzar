@@ -75,9 +75,70 @@ export default async function RequestDetailPage({
       </div>
 
       {isNew === '1' && (
-        <div className="mx-4 mt-4 bg-green-50 border border-green-200 rounded-xl p-4 text-center">
-          <p className="text-green-700 font-medium">✅ {t('request.success')}</p>
-          <p className="text-green-600 text-sm mt-1">{t('request.successHint')}</p>
+        <div className="mx-4 mt-4 bg-green-50 border border-green-200 rounded-2xl p-5">
+          <div className="text-center mb-5">
+            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <span className="text-2xl">✅</span>
+            </div>
+            <p className="text-green-800 font-bold text-lg">{t('request.success')}</p>
+            <p className="text-green-600 text-sm mt-1">{t('request.successHint')}</p>
+          </div>
+
+          {/* What happens next — timeline */}
+          <div className="space-y-0">
+            {/* Step 1 — done */}
+            <div className="flex gap-3">
+              <div className="flex flex-col items-center">
+                <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-xs font-bold">✓</span>
+                </div>
+                <div className="w-0.5 h-6 bg-green-300 mt-1" />
+              </div>
+              <div className="pb-4">
+                <p className="text-sm font-semibold text-green-800">
+                  {isRTL ? 'تم نشر طلبك' : 'Demande publiée'}
+                </p>
+                <p className="text-xs text-green-600 mt-0.5">
+                  {isRTL ? 'وصل طلبك إلى الحرفيين المتاحين' : 'Votre demande a été transmise aux artisans disponibles'}
+                </p>
+              </div>
+            </div>
+
+            {/* Step 2 — in progress */}
+            <div className="flex gap-3">
+              <div className="flex flex-col items-center">
+                <div className="w-8 h-8 rounded-full bg-amber-100 border-2 border-amber-400 flex items-center justify-center flex-shrink-0 animate-pulse">
+                  <span className="text-amber-600 text-xs">🔍</span>
+                </div>
+                <div className="w-0.5 h-6 bg-gray-200 mt-1" />
+              </div>
+              <div className="pb-4">
+                <p className="text-sm font-semibold text-gray-800">
+                  {isRTL ? 'جارٍ البحث عن الحرفيين' : 'Recherche d\'artisans en cours'}
+                </p>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  {isRTL ? 'نطابق طلبك مع الحرفيين المؤهلين' : 'Nous matchons votre demande avec les artisans qualifiés'}
+                </p>
+              </div>
+            </div>
+
+            {/* Step 3 — pending */}
+            <div className="flex gap-3">
+              <div className="flex flex-col items-center">
+                <div className="w-8 h-8 rounded-full bg-gray-100 border-2 border-gray-200 flex items-center justify-center flex-shrink-0">
+                  <span className="text-gray-400 text-xs">📩</span>
+                </div>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-500">
+                  {isRTL ? 'ستصلك العروض قريباً' : 'Vous recevrez les offres bientôt'}
+                </p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {isRTL ? 'عادةً خلال بضع ساعات' : 'Généralement dans quelques heures'}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

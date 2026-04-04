@@ -1,17 +1,22 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useLocale } from '@/hooks/useLocale'
+import { createClient } from '@/lib/supabase/client'
 import type { Category, City, Neighborhood } from '@/types'
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, Camera, X, Image as ImageIcon } from 'lucide-react'
 
-type Step = 1 | 2 | 3 | 4 | 5
+type Step = 1 | 2 | 3 | 4 | 5 | 6
+
+const MAX_PHOTOS = 5
+const TOTAL_STEPS = 6
 
 export default function NewRequestPage() {
   const router = useRouter()
   const { locale, isRTL } = useLocale()
   const BackIcon = isRTL ? ArrowRight : ArrowLeft
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [step, setStep] = useState<Step>(1)
   const [categories, setCategories] = useState<Category[]>([])
@@ -21,6 +26,9 @@ export default function NewRequestPage() {
   const [categoryId, setCategoryId] = useState('')
   const [description, setDescription] = useState('')
   const [budgetText, setBudgetText] = useState('')
+  const [photos, setPhotos] = useState<string[]>([]) // public URLs after upload
+  const [uploadingPhoto, setUploadingPhoto] = useState(false)
+  const [photoError, setPhotoError] = useState('')
   const [cityId, setCityId] = useState('')
   const [neighborhoodId, setNeighborhoodId] = useState('')
   const [urgency, setUrgency] = useState<'urgent' | 'soon' | 'flexible'>('soon')
@@ -40,13 +48,67 @@ export default function NewRequestPage() {
   const cityName = (c: City) => locale === 'ar' ? c.name_ar : c.name_fr
   const nbName = (n: Neighborhood) => locale === 'ar' ? n.name_ar : n.name_fr
 
+  async function handlePhotoSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? [])
+    if (!files.length) return
+    if (photos.length + files.length > MAX_PHOTOS) {
+      setPhotoError(isRTL ? `الحد الأقصى ${MAX_PHOTOS} صور` : `Maximum ${MAX_PHOTOS} photos`)
+      return
+    }
+    setPhotoError('')
+    setUploadingPhoto(true)
+
+    try {
+      const supabase = createClient()
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) throw new Error('Session expirée')
+
+      const uploadedUrls: string[] = []
+      for (const file of files) {
+        const ext = file.name.split('.').pop() ?? 'jpg'
+        const path = `${session.user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+        const { error: uploadError } = await supabase.storage
+          .from('request-photos')
+          .upload(path, file, { contentType: file.type, upsert: false })
+
+        if (uploadError) throw uploadError
+
+        const { data: urlData } = supabase.storage
+          .from('request-photos')
+          .getPublicUrl(path)
+        uploadedUrls.push(urlData.publicUrl)
+      }
+
+      setPhotos(prev => [...prev, ...uploadedUrls])
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Erreur upload'
+      setPhotoError(msg)
+    } finally {
+      setUploadingPhoto(false)
+      // Reset input so same file can be re-selected
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
+
+  function removePhoto(url: string) {
+    setPhotos(prev => prev.filter(u => u !== url))
+  }
+
   async function handleSubmit() {
     setSubmitting(true)
     setError('')
     const res = await fetch('/api/v1/requests', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ category_id: categoryId, city_id: cityId, neighborhood_id: neighborhoodId || null, description, budget_text: budgetText || null, urgency }),
+      body: JSON.stringify({
+        category_id: categoryId,
+        city_id: cityId,
+        neighborhood_id: neighborhoodId || null,
+        description,
+        budget_text: budgetText || null,
+        urgency,
+        photos: photos.length > 0 ? photos : undefined,
+      }),
     })
     if (!res.ok) { const d = await res.json(); setError(d.error || 'Erreur'); setSubmitting(false); return }
     const data = await res.json()
@@ -54,15 +116,21 @@ export default function NewRequestPage() {
   }
 
   const canNext: Record<Step, boolean> = {
-    1: !!categoryId, 2: description.trim().length >= 10, 3: !!cityId, 4: !!urgency, 5: true,
+    1: !!categoryId,
+    2: description.trim().length >= 10,
+    3: true, // photos optional
+    4: !!cityId,
+    5: !!urgency,
+    6: true,
   }
 
   const stepTitles: Record<Step, string> = {
     1: isRTL ? 'ما الخدمة التي تبحث عنها؟' : 'Quel service cherchez-vous ?',
     2: isRTL ? 'صف حاجتك' : 'Décrivez votre besoin',
-    3: isRTL ? 'أين تقع؟' : 'Où êtes-vous ?',
-    4: isRTL ? 'ما مدى الاستعجال؟' : "Quelle est l'urgence ?",
-    5: isRTL ? 'ملخص الطلب' : 'Récapitulatif',
+    3: isRTL ? 'أضف صوراً (اختياري)' : 'Ajoutez des photos (optionnel)',
+    4: isRTL ? 'أين تقع؟' : 'Où êtes-vous ?',
+    5: isRTL ? 'ما مدى الاستعجال؟' : "Quelle est l'urgence ?",
+    6: isRTL ? 'ملخص الطلب' : 'Récapitulatif',
   }
 
   const urgencyOptions = [
@@ -83,12 +151,12 @@ export default function NewRequestPage() {
             <BackIcon size={18} className="text-gray-600" />
           </button>
           <div className="flex-1 flex gap-1.5">
-            {[1,2,3,4,5].map(s => (
-              <div key={s} className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${s <= step ? 'bg-[#1A6B4A]' : 'bg-gray-100'}`} />
+            {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
+              <div key={i} className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${i + 1 <= step ? 'bg-[#1A6B4A]' : 'bg-gray-100'}`} />
             ))}
           </div>
           <span className="text-xs text-gray-400 font-medium w-10 text-end">
-            {step}/5
+            {step}/{TOTAL_STEPS}
           </span>
         </div>
         <h1 className="text-2xl font-bold text-gray-900">{stepTitles[step]}</h1>
@@ -151,8 +219,86 @@ export default function NewRequestPage() {
           </div>
         )}
 
-        {/* Step 3: Location */}
+        {/* Step 3: Photos */}
         {step === 3 && (
+          <div className="space-y-5">
+            <p className="text-sm text-gray-500 leading-relaxed">
+              {isRTL
+                ? `أضف حتى ${MAX_PHOTOS} صور لمساعدة الحرفيين على فهم المشكلة بشكل أفضل`
+                : `Ajoutez jusqu'à ${MAX_PHOTOS} photos pour aider les artisans à mieux comprendre votre problème`}
+            </p>
+
+            {/* Photo grid */}
+            {photos.length > 0 && (
+              <div className="grid grid-cols-3 gap-3">
+                {photos.map((url, i) => (
+                  <div key={i} className="relative aspect-square rounded-2xl overflow-hidden bg-gray-100 group">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={url} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
+                    <button
+                      onClick={() => removePhoto(url)}
+                      className="absolute top-1.5 end-1.5 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X size={12} className="text-white" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Upload area */}
+            {photos.length < MAX_PHOTOS && (
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingPhoto}
+                className="w-full border-2 border-dashed border-gray-200 rounded-3xl p-8 flex flex-col items-center gap-3 text-gray-400 hover:border-[#1A6B4A] hover:text-[#1A6B4A] hover:bg-[#1A6B4A]/3 transition-all disabled:opacity-50"
+              >
+                {uploadingPhoto ? (
+                  <>
+                    <div className="w-10 h-10 rounded-full border-2 border-[#1A6B4A] border-t-transparent animate-spin" />
+                    <p className="text-sm font-medium">{isRTL ? 'جارٍ الرفع...' : 'Téléversement...'}</p>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center">
+                      <Camera size={22} />
+                    </div>
+                    <div className="text-center">
+                      <p className="text-sm font-semibold">
+                        {isRTL ? 'انقر لإضافة صور' : 'Cliquez pour ajouter des photos'}
+                      </p>
+                      <p className="text-xs mt-0.5">
+                        {isRTL ? `${photos.length}/${MAX_PHOTOS} صور` : `${photos.length}/${MAX_PHOTOS} photos`}
+                      </p>
+                    </div>
+                  </>
+                )}
+              </button>
+            )}
+
+            {photoError && (
+              <p className="text-sm text-red-500 text-center">{photoError}</p>
+            )}
+
+            {/* Hidden file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={handlePhotoSelect}
+            />
+
+            {/* Skip hint */}
+            <p className="text-xs text-gray-400 text-center">
+              {isRTL ? 'يمكنك تخطي هذه الخطوة' : 'Vous pouvez passer cette étape'}
+            </p>
+          </div>
+        )}
+
+        {/* Step 4: Location */}
+        {step === 4 && (
           <div className="space-y-5">
             <div className="space-y-2">
               {cities.map(city => (
@@ -190,8 +336,8 @@ export default function NewRequestPage() {
           </div>
         )}
 
-        {/* Step 4: Urgency */}
-        {step === 4 && (
+        {/* Step 5: Urgency */}
+        {step === 5 && (
           <div className="space-y-3">
             {urgencyOptions.map(u => (
               <button
@@ -219,8 +365,8 @@ export default function NewRequestPage() {
           </div>
         )}
 
-        {/* Step 5: Summary */}
-        {step === 5 && (
+        {/* Step 6: Summary */}
+        {step === 6 && (
           <div className="space-y-4">
             <div className="bg-gray-50 rounded-3xl p-5 space-y-4">
               {[
@@ -235,6 +381,27 @@ export default function NewRequestPage() {
                   <p className="text-sm font-medium text-gray-900 mt-1">{value}</p>
                 </div>
               ))}
+
+              {/* Photos summary */}
+              {photos.length > 0 && (
+                <div className="border-b border-gray-100 pb-4 last:border-0 last:pb-0">
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                    {isRTL ? 'الصور' : 'Photos'}
+                  </p>
+                  <div className="flex gap-2 flex-wrap">
+                    {photos.map((url, i) => (
+                      <div key={i} className="w-16 h-16 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={url} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
+                      </div>
+                    ))}
+                    <div className="flex items-center gap-1 text-xs text-gray-400 ms-1">
+                      <ImageIcon size={14} />
+                      {photos.length} {isRTL ? 'صور' : 'photo(s)'}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
             {error && (
               <div className="bg-red-50 rounded-2xl p-4">
@@ -247,7 +414,7 @@ export default function NewRequestPage() {
 
       {/* Footer */}
       <div className="px-5 pb-10 pt-4 border-t border-gray-50">
-        {step < 5 ? (
+        {step < TOTAL_STEPS ? (
           <button
             onClick={() => setStep(s => (s + 1) as Step)}
             disabled={!canNext[step]}

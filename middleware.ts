@@ -39,8 +39,10 @@ export async function middleware(request: NextRequest) {
   const isStaticAsset = pathname.startsWith('/api/v1/categories') ||
     pathname.startsWith('/api/v1/cities') ||
     pathname.startsWith('/api/v1/neighborhoods')
+  const isPublicDirectory = pathname.startsWith('/artisans')
+  const isPublicApi = pathname.startsWith('/api/v1/public/')
 
-  if (!user && !isAuthRoute && !isPublicPage && !isApiAuth && !isStaticAsset) {
+  if (!user && !isAuthRoute && !isPublicPage && !isApiAuth && !isStaticAsset && !isPublicDirectory && !isPublicApi) {
     return NextResponse.redirect(new URL('/auth', request.url))
   }
 
