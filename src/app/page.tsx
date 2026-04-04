@@ -289,7 +289,7 @@ export default async function LandingPage() {
           {/* CTAs */}
           <div className={`flex flex-col sm:flex-row gap-3 mb-16 ${isRTL ? 'sm:justify-end' : ''}`}>
             <Link
-              href="/auth"
+              href="/demande"
               className="inline-flex items-center justify-center gap-2 bg-[#E8A838] hover:bg-[#d4952e] text-white font-semibold px-7 py-4 rounded-2xl transition-all duration-200 shadow-lg shadow-[#E8A838]/30 hover:-translate-y-0.5 text-base"
             >
               {t.hero.cta1}
@@ -481,6 +481,7 @@ export default async function LandingPage() {
             {t.providerCta.cta}
             <ChevronRight className={`w-4 h-4 ${isRTL ? 'rotate-180' : ''}`} />
           </Link>
+
         </div>
       </section>
 
